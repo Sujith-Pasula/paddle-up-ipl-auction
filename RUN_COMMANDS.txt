@@ -1,0 +1,77 @@
+PADDLE UP — WINDOWS / VS CODE
+
+1) Extract the ZIP.
+2) Open the extracted `paddleup` folder in VS Code.
+
+OPTION A — two terminals (recommended)
+
+TERMINAL 1 — backend
+cd server
+npm install
+npm run dev
+
+TERMINAL 2 — frontend
+cd client
+npm install
+npm run dev-mobile
+
+Open on the PC:
+http://localhost:5173
+
+OPTION B — from the project root
+
+npm install
+npm run install:all
+npm run dev
+
+Then open:
+http://localhost:5173
+
+MULTIPLAYER TEST
+
+1. Open http://localhost:5173 in Browser A.
+2. Create a room and select a team.
+3. Copy the room link.
+4. Open the link in an Incognito window or another browser.
+5. Enter another name and select another available team.
+6. Join the room.
+7. The host starts the auction.
+
+PHONE TEST ON THE SAME WI-FI
+
+IMPORTANT: phone and PC must be connected to the same Wi-Fi.
+Use the mobile-safe client command below so the phone can reach Vite on the LAN.
+
+Run on Windows:
+ipconfig
+
+Find your IPv4 address, e.g. 192.168.1.20.
+
+On the phone, open:
+http://192.168.1.20:5173
+
+Replace 192.168.1.20 with the IPv4 address shown by ipconfig.
+The phone will automatically connect to the backend at the same IP on port 5000.
+
+If Windows Firewall asks, allow Node.js on Private networks.
+
+If the phone still cannot join, run PowerShell as Administrator once:
+netsh advfirewall firewall add rule name="PADDLE UP Vite 5173" dir=in action=allow protocol=TCP localport=5173
+netsh advfirewall firewall add rule name="PADDLE UP Server 5000" dir=in action=allow protocol=TCP localport=5000
+
+HEALTH CHECK
+
+With the backend running, open:
+http://localhost:5000/api/health
+
+Expected JSON contains:
+"ok": true
+"game": "PADDLE UP"
+
+NOTES
+
+- No MongoDB is required for local play. Rooms are persisted to server/data/rooms.json.
+- MongoDB can be enabled later with MONGODB_URI in server/.env.
+- Default purse: ₹120 Cr per team.
+- Default bidding timer: 10 seconds.
+- The server is authoritative for bids, purse, ownership, and timer.
