@@ -2,7 +2,9 @@ import { io } from 'socket.io-client';
 
 const isBrowser = typeof window !== 'undefined';
 
-const hostname = isBrowser ? window.location.hostname : 'localhost';
+const hostname = isBrowser
+  ? window.location.hostname
+  : 'localhost';
 
 const isLocal =
   hostname === 'localhost' ||

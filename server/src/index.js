@@ -22,7 +22,17 @@ app.use(cors({ origin: true, credentials: true }));
 app.use(express.json());
 
 const server = http.createServer(app);
-const io = new Server(server, { cors: { origin: true, methods: ['GET','POST'], credentials: true }, transports: ['websocket','polling'] });
+
+const io = new Server(server, {
+  path: process.env.VERCEL ? '/api/socket.io' : '/socket.io',
+  cors: {
+    origin: true,
+    methods: ['GET', 'POST'],
+    credentials: true
+  },
+  transports: ['websocket', 'polling']
+});
+
 const rooms = new Map();
 const timers = new Map();
 const sockets = new Map();
@@ -341,9 +351,29 @@ io.on('connection', socket => {
 
 async function boot() {
   if (process.env.MONGODB_URI) {
-    try { await mongoose.connect(process.env.MONGODB_URI); setMongoEnabled(true); console.log('MongoDB connected'); }
-    catch (e) { console.warn('MongoDB unavailable; using JSON persistence:', e.message); }
+    try {
+      await mongoose.connect(process.env.MONGODB_URI);
+      setMongoEnabled(true);
+      console.log('MongoDB connected');
+    } catch (e) {
+      console.warn(
+        'MongoDB unavailable; using JSON persistence:',
+        e.message
+      );
+    }
   }
-  server.listen(PORT, '0.0.0.0', () => console.log(`PADDLE UP server running on http://localhost:${PORT}`));
 }
-boot();
+
+// Local development only
+if (!process.env.VERCEL) {
+  boot();
+
+  server.listen(PORT, '0.0.0.0', () => {
+    console.log(
+      `PADDLE UP server running on http://localhost:${PORT}`
+    );
+  });
+}
+
+// Vercel needs the server exported
+export default server;
